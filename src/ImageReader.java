@@ -40,6 +40,7 @@ public class ImageReader{
         System.out.println("Counting Distinct Colors");
         counters = new HuffmanNode[raster.getHeight()*raster.getWidth()];
         Pixel pixel = null;
+        
         for(int i = 0; i < raster.getHeight(); i++){
             for(int j = 0; j < raster.getWidth(); j++){
                 int[] buffer = new int[4];
@@ -85,7 +86,8 @@ public class ImageReader{
             }
         }
         System.out.println("Distinct Colors Counted");
-       System.out.println("Counters length = " + counters.length);
+        System.out.println("Counters length = " + counters.length);
+        
         HuffmanNode[] buffer = new HuffmanNode[distinctColorCtr];
 
         System.arraycopy(counters, 0, buffer, 0, distinctColorCtr);
@@ -96,19 +98,19 @@ public class ImageReader{
 
     public static HuffmanNode createHuffmanTree(HuffmanNode[] counters){
         System.out.println("Generating Tree");
-        PriorityQueue prioQueue = new PriorityQueue();
+        PriorityQueue queue = new PriorityQueue();
         System.out.println("Generating Queue");
         for (HuffmanNode counter : counters) {
-            prioQueue.enqueue(counter);
+            queue.enqueue(counter);
         }
         System.out.println("Queue Generated");
-        while(prioQueue.list.length > 1){
-            HuffmanNode emptyNode = new HuffmanNode(prioQueue.dequeue(), prioQueue.dequeue());
+        while(queue.list.length > 1){
+            HuffmanNode emptyNode = new HuffmanNode(queue.dequeue(), queue.dequeue());
             emptyNode.ctr = emptyNode.left.ctr + emptyNode.right.ctr;
-            prioQueue.enqueue(emptyNode);
+            queue.enqueue(emptyNode);
         }
         System.out.println("Tree Generated");
-        return prioQueue.dequeue();
+        return queue.dequeue();
     }
 
     public void codeAssignment(HuffmanNode node, String traversalHistory){
@@ -152,6 +154,7 @@ public class ImageReader{
             Pixel pixel = null;
             System.out.println("Converting Image to Binary String");
             System.out.println("Converting Binary String to ASCII and Save to File");
+
             for(int i = 0; i < raster.getHeight(); i++){
                 for(int j = 0; j < raster.getWidth(); j++){
                     int[] buffer = new int[4];

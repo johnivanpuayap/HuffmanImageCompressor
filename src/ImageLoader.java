@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class ImageLoader {
     HuffmanNode[] counters = null;
@@ -64,14 +65,14 @@ public class ImageLoader {
         InputStreamReader reader = null;
         try {
             System.out.println("Initiating Huff File Reading");
-            reader = new InputStreamReader(new FileInputStream(file), "UTF-8");
+            reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
             while ((line = reader.read()) != -1) {
                 fileLength++;
             }
             reader.close();
             dataByte = new short[fileLength];
             counters = new HuffmanNode[(int) ((float) fileLength / 5.0)];
-            reader = new InputStreamReader(new FileInputStream(file), "UTF-8");
+            reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
             int i = 0;
             while ((line = reader.read()) != -1) {
                 dataByte[i++] = (short) line;
@@ -106,13 +107,12 @@ public class ImageLoader {
         file = file.substring(0, file.length() - 3);
         file += "IJK";
         int line;
-        InputStreamReader reader = null;
+
         int x = 0, y = 0;
         Pixel rgb = null;
         System.out.println("Reading Image File");
 
-        try {
-            reader = new InputStreamReader(new FileInputStream(file));
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file))) {
             int lineNo = 0;
             while (lineNo != 2) {
                 int g = reader.read();
@@ -149,8 +149,6 @@ public class ImageLoader {
                 }
             }
             System.out.println("Printing Image File Done");
-        } finally {
-            reader.close();
         }
         System.out.println("Reading Image File Done");
         file = file.substring(0, file.length() - 4);

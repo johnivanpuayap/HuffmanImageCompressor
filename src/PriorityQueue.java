@@ -44,9 +44,7 @@ public class PriorityQueue{
             HuffmanNode[] buffer = new HuffmanNode[list.length-1];
             ret = list[0];
             ret.ctr = list[0].ctr;
-            for(int i = 0; i < buffer.length; i++){
-                buffer[i] = list[i+1];
-            }
+            System.arraycopy(list, 1, buffer, 0, buffer.length);
             list = null;
             list = buffer;
             buffer = null;
