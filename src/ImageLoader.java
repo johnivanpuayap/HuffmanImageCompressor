@@ -6,15 +6,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 
-public class ImageLoader {
+public class ImageLoader extends JPanel {
     HuffmanNode[] counters = null;
     HuffmanNode tree = null;
     HuffmanNode node = null;
-    String binaryCode = "";
     int height, width;
     int width2, height2;
     BufferedImage image = null;
+    GUI gui;
+
+    public void setGUI(GUI gui) {
+
+        this.gui = gui;
+    }
 
     public BufferedImage getImage(String file) {
 
@@ -43,7 +50,9 @@ public class ImageLoader {
                 width2 = 690;
             }
             System.out.println("Creating Pixels Done");
+            gui.display("Creating Pixels Done");
             System.out.println("Loading Image");
+            gui.display("Loading Image");
             counters = getCounters(file);
             tree = ImageReader.createHuffmanTree(counters);
             getBinaryCode(file);
@@ -56,7 +65,6 @@ public class ImageLoader {
     public static HuffmanNode[] getCounters(String file) throws IOException {
         file = file.substring(0, file.length() - 3);
         file += "HUFF";
-        String data = "";
 
         int line, fileLength = 0;
         HuffmanNode[] counters = null;
@@ -78,6 +86,7 @@ public class ImageLoader {
                 dataByte[i++] = (short) line;
             }
         } finally {
+            assert reader != null;
             reader.close();
         }
         System.out.println("Reading Huff File");
@@ -92,9 +101,7 @@ public class ImageLoader {
             ctr++;
         }
         HuffmanNode[] buffer = new HuffmanNode[ctr];
-        for (int i = 0; i < buffer.length; i++) {
-            buffer[i] = counters[i];
-        }
+        System.arraycopy(counters, 0, buffer, 0, buffer.length);
         counters = null;
         counters = new HuffmanNode[buffer.length];
         counters = buffer;
@@ -107,11 +114,10 @@ public class ImageLoader {
         file = file.substring(0, file.length() - 3);
         file += "IJK";
         int line;
-
         int x = 0, y = 0;
         Pixel rgb = null;
         System.out.println("Reading Image File");
-
+        gui.display("Reading Image File");
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file))) {
             int lineNo = 0;
             while (lineNo != 2) {
@@ -121,12 +127,12 @@ public class ImageLoader {
                 }
             }
             node = tree;
-            int pixNo = 0;
             System.out.println("Printing Image File");
+            gui.display("Printing Image File");
             while ((line = reader.read()) != -1) {
-                String character = Integer.toBinaryString(line);
+                StringBuilder character = new StringBuilder(Integer.toBinaryString(line));
                 while (character.length() < 7) {
-                    character = "0" + character;
+                    character.insert(0, "0");
                 }
                 for (int i = 0; i < character.length(); i++) {
                     if (character.charAt(i) == '1') {
@@ -144,15 +150,19 @@ public class ImageLoader {
                             x = 0;
                             y++;
                         }
+                        repaint();
                         node = tree;
                     }
                 }
             }
             System.out.println("Printing Image File Done");
+            gui.display("Printing Image File Done");
         }
         System.out.println("Reading Image File Done");
+        gui.display("Reading Image File Done");
         file = file.substring(0, file.length() - 4);
         file += "(compressed).png";
         File outImage = new File(file);
+        ImageIO.write(image, "png", outImage);
     }
 }

@@ -22,15 +22,11 @@ public class PriorityQueue{
 
         if(!added){
             HuffmanNode[] buffer = new HuffmanNode[list.length+1];
-            for(int i = 0; i < list.length; i++){
-                buffer[i] = list[i];
-            }
+            System.arraycopy(list, 0, buffer, 0, list.length);
             buffer[list.length] = key;
             list = null;
             list = new HuffmanNode[buffer.length];
-            for(int i = 0; i < buffer.length; i++){
-                list[i] = buffer[i];
-            }
+            System.arraycopy(buffer, 0, list, 0, buffer.length);
             buffer = null;
             return;
         }

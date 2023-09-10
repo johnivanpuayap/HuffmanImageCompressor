@@ -16,11 +16,6 @@ public class HuffmanNode {
     }
 
     public boolean isKeyNull() {
-        try {
-            this.key.getRGB();
-            return false;
-        } catch (NullPointerException e) {
-            return true;
-        }
+        return this.key == null;
     }
 }

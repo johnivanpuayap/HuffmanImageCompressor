@@ -13,10 +13,17 @@ public class ImageReader{
     HuffmanNode[] counters = null;
     int distinctColorCtr = 0;
     HuffmanNode tree = null;
+    GUI gui;
+
+    public void setGUI(GUI gui) {
+        this.gui = gui;
+    }
 
     public void assignTree(String file) {
+        gui.display("Generating Tree");
         tree = createHuffmanTree(counters);
         codeAssignment(tree, "");
+        gui.display("Tree Generated");
     }
 
     public void loadImage(String file){
@@ -26,6 +33,7 @@ public class ImageReader{
             raster = image.getRaster();
         }catch(IOException e){return;}
         System.out.println("Image height = " + raster.getHeight() + ", width = " + raster.getWidth());
+        gui.display("Image height = " + raster.getHeight() + ", width = " + raster.getWidth());
     }
 
     public void reset(){
@@ -38,21 +46,25 @@ public class ImageReader{
 
     public void countFreq(){
         System.out.println("Counting Distinct Colors");
+        gui.display("Counting Distinct Colors");
         counters = new HuffmanNode[raster.getHeight()*raster.getWidth()];
         Pixel pixel = null;
-        
+
         for(int i = 0; i < raster.getHeight(); i++){
             for(int j = 0; j < raster.getWidth(); j++){
                 int[] buffer = new int[4];
                 buffer = raster.getPixel(j, i, buffer);
                 pixel = new Pixel(buffer[0], buffer[1], buffer[2], j, i);
+
                 int start = 0, end = distinctColorCtr-1, mid = (int)((float)(start+end)/2.0);
+
                 if(distinctColorCtr == 0){
                     counters[distinctColorCtr] = new HuffmanNode(pixel);
                     counters[distinctColorCtr].ctr = 1;
                     distinctColorCtr++;
                     continue;
                 }
+
                 while(true){
                     if(counters[mid].key.getRGB() == pixel.getRGB()){
                         counters[mid].ctr++;
@@ -85,11 +97,13 @@ public class ImageReader{
                 }
             }
         }
-        System.out.println("Distinct Colors Counted");
-        System.out.println("Counters length = " + counters.length);
-        
-        HuffmanNode[] buffer = new HuffmanNode[distinctColorCtr];
 
+        System.out.println("Distinct Colors Counted");
+        gui.display("Distinct Colors Counted");
+
+        System.out.println("Counters length = " + counters.length);
+
+        HuffmanNode[] buffer = new HuffmanNode[distinctColorCtr];
         System.arraycopy(counters, 0, buffer, 0, distinctColorCtr);
         counters = null;
         counters = buffer;
@@ -98,19 +112,19 @@ public class ImageReader{
 
     public static HuffmanNode createHuffmanTree(HuffmanNode[] counters){
         System.out.println("Generating Tree");
-        PriorityQueue queue = new PriorityQueue();
+        PriorityQueue prioQueue = new PriorityQueue();
         System.out.println("Generating Queue");
         for (HuffmanNode counter : counters) {
-            queue.enqueue(counter);
+            prioQueue.enqueue(counter);
         }
         System.out.println("Queue Generated");
-        while(queue.list.length > 1){
-            HuffmanNode emptyNode = new HuffmanNode(queue.dequeue(), queue.dequeue());
+        while(prioQueue.list.length > 1){
+            HuffmanNode emptyNode = new HuffmanNode(prioQueue.dequeue(), prioQueue.dequeue());
             emptyNode.ctr = emptyNode.left.ctr + emptyNode.right.ctr;
-            queue.enqueue(emptyNode);
+            prioQueue.enqueue(emptyNode);
         }
         System.out.println("Tree Generated");
-        return queue.dequeue();
+        return prioQueue.dequeue();
     }
 
     public void codeAssignment(HuffmanNode node, String traversalHistory){
@@ -129,6 +143,7 @@ public class ImageReader{
     public void createHuffFile(String file){
         try{
             System.out.println("Generating Huff File");
+            gui.display("Generating Huff File");
             String huffName = file.substring(0, file.length()-3) + "HUFF";
             PrintWriter writer = new PrintWriter(huffName, StandardCharsets.UTF_8);
             for (HuffmanNode counter : counters) {
@@ -140,12 +155,14 @@ public class ImageReader{
             }
             writer.close();
             System.out.println("Huff File Generated");
-        }catch(IOException e){}
+            gui.display("Huff File Generated");
+        }catch(IOException ignored){}
     }
 
     public void createNewImageFile(String file){
         try{
             System.out.println("Generating Image File");
+            gui.display("Generating Image File");
             String huffName = file.substring(0, file.length()-3) + "IJK";
             PrintWriter writer = new PrintWriter(huffName);
             writer.println(raster.getHeight()+"\n"+raster.getWidth());
@@ -153,8 +170,9 @@ public class ImageReader{
             String zeroes = "00000000";
             Pixel pixel = null;
             System.out.println("Converting Image to Binary String");
+            gui.display("Converting Image to Binary String");
             System.out.println("Converting Binary String to ASCII and Save to File");
-
+            gui.display("Converting Binary String to ASCII and Save to File");
             for(int i = 0; i < raster.getHeight(); i++){
                 for(int j = 0; j < raster.getWidth(); j++){
                     int[] buffer = new int[4];
@@ -179,22 +197,22 @@ public class ImageReader{
                             mid = (int)((float)(start+end)/2.0);
                         }
                     }
-                    if(!foundCode){
-                        System.out.println("Error! Pixel(" + j + ", " + i + ")");
-                    }
                 }
             }
             while(binaryImage.length()%7!=0){
                 binaryImage.append("0");
             }
             System.out.println("Converting Image to Binary String Done");
-           for(int i = 0; i < binaryImage.length();){
+            gui.display("Converting Image to Binary String Done");
+            for(int i = 0; i < binaryImage.length();){
                 writer.print((char)Integer.parseInt(binaryImage.substring(i, i+7), 2));
                 i+=7;
             }
             System.out.println("Converting Binary String to ASCII and Save to File Done");
+            gui.display("Converting Binary String to ASCII and Save to File Done");
             writer.close();
             System.out.println("Image File Created");
+            gui.display("Image File Created");
         }catch(IOException ignored){}
     }
 }
