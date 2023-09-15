@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
@@ -27,7 +28,6 @@ public class ImageLoader extends JPanel {
 
         try {
             String file1 = file.substring(0, file.length() - 3);
-            ;
             file1 += "IJK";
             BufferedReader reader = new BufferedReader(new FileReader(file1));
             String s = reader.readLine();
@@ -67,14 +67,14 @@ public class ImageLoader extends JPanel {
         file += "HUFF";
 
         int line, fileLength = 0;
-        HuffmanNode[] counters = null;
+        HuffmanNode[] counters;
         int ctr = 0;
-        short[] dataByte = null;
+        short[] dataByte;
         InputStreamReader reader = null;
         try {
             System.out.println("Initiating Huff File Reading");
             reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-            while ((line = reader.read()) != -1) {
+            while (reader.read() != -1) {
                 fileLength++;
             }
             reader.close();
@@ -92,9 +92,9 @@ public class ImageLoader extends JPanel {
         System.out.println("Reading Huff File");
         for (int i = 0; i < dataByte.length - 2;) {
             counters[ctr] = new HuffmanNode(
-                    new Pixel((int) dataByte[i++], (int) dataByte[i++], (int) dataByte[i++], 0, 0));
-            String ctr1 = Integer.toBinaryString((int) dataByte[i++]),
-                    ctr2 = Integer.toBinaryString((int) dataByte[i++]), zeroes = "00000000";
+                    new Pixel(dataByte[i++], dataByte[i++], dataByte[i++], 0, 0));
+            String ctr1 = Integer.toBinaryString(dataByte[i++]),
+                    ctr2 = Integer.toBinaryString(dataByte[i++]), zeroes = "00000000";
             ctr1 = zeroes.substring(0, (ctr1.length() < 8 ? 8 - ctr1.length() : 0)) + ctr1;
             ctr2 = zeroes.substring(0, (ctr2.length() < 8 ? 8 - ctr2.length() : 0)) + ctr2;
             counters[ctr].ctr = Integer.parseInt(ctr1 + ctr2, 2);
@@ -102,8 +102,6 @@ public class ImageLoader extends JPanel {
         }
         HuffmanNode[] buffer = new HuffmanNode[ctr];
         System.arraycopy(counters, 0, buffer, 0, buffer.length);
-        counters = null;
-        counters = new HuffmanNode[buffer.length];
         counters = buffer;
         System.out.println("Counters = " + counters.length + ", Actual = " + ctr);
         System.out.println("Huff File Reading Done");
@@ -115,7 +113,7 @@ public class ImageLoader extends JPanel {
         file += "IJK";
         int line;
         int x = 0, y = 0;
-        Pixel rgb = null;
+        Pixel rgb;
         System.out.println("Reading Image File");
         gui.display("Reading Image File");
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(file))) {

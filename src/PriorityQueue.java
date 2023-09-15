@@ -1,4 +1,4 @@
-public class PriorityQueue{
+public class PriorityQueue {
     HuffmanNode[] list = new HuffmanNode[0];
 
     public void enqueue(HuffmanNode key){
@@ -9,13 +9,10 @@ public class PriorityQueue{
                 for(int j = 0, a = 0; j < list.length; j++, a++){
                     if(j == i){
                         buffer[a++] = key;
-                        added = true;
                     }
                     buffer[a] = list[j];
                 }
-                list = null;
                 list = buffer;
-                buffer = null;
                 return;
             }
         }
@@ -24,16 +21,13 @@ public class PriorityQueue{
             HuffmanNode[] buffer = new HuffmanNode[list.length+1];
             System.arraycopy(list, 0, buffer, 0, list.length);
             buffer[list.length] = key;
-            list = null;
             list = new HuffmanNode[buffer.length];
             System.arraycopy(buffer, 0, list, 0, buffer.length);
-            buffer = null;
-            return;
         }
     }
 
     public HuffmanNode dequeue(){
-        HuffmanNode ret = null;
+        HuffmanNode ret;
         if(list.length == 0){
             return null;
         }else{
@@ -41,9 +35,7 @@ public class PriorityQueue{
             ret = list[0];
             ret.ctr = list[0].ctr;
             System.arraycopy(list, 1, buffer, 0, buffer.length);
-            list = null;
             list = buffer;
-            buffer = null;
             return ret;
         }
     }

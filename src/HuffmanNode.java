@@ -4,10 +4,12 @@ public class HuffmanNode {
     boolean keyNull = true;
     int ctr = 0;
     String code = "";
+    static int counter = 0;
 
     public HuffmanNode(Pixel key) {
         this.key = key;
         this.keyNull = false;
+        counter++;
     }
 
     public HuffmanNode(HuffmanNode left, HuffmanNode right) {
@@ -16,6 +18,11 @@ public class HuffmanNode {
     }
 
     public boolean isKeyNull() {
-        return this.key == null;
+        try {
+            this.key.getRGB();
+            return false;
+        } catch (NullPointerException e) {
+            return true;
+        }
     }
 }

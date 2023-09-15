@@ -63,7 +63,7 @@ public class GUI extends JFrame implements ActionListener {
         try {
             UIManager.setLookAndFeel("com.jtattoo.plaf.texture.TextureLookAndFeel");
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Handle the exception or display an error message
         }
 
         menuBar = new JMenuBar();
@@ -193,8 +193,8 @@ public class GUI extends JFrame implements ActionListener {
         toolBar.setBounds(0, 0, getSize().width - 16, 30);
         imageTab.setBounds(0, 30, (getSize().width / 2) - 14, getSize().height - 310);
         himageTab.setBounds(getSize().width / 2, 30, (getSize().width / 2) - 14, getSize().height - 310);
-        statusTab.setBounds(200, 508, getSize().width - 215, 215);
-        timeTab.setBounds(0, 508, 195, 215);
+        statusTab.setBounds(200, 600, getSize().width - 215, 215);
+        timeTab.setBounds(0, 600, 195, 215);
         repaint();
         revalidate();
 
@@ -225,7 +225,6 @@ public class GUI extends JFrame implements ActionListener {
             aFunctionRunning = true;
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("PNG (*.PNG)", "PNG"));
-            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
             fileChooser.setAcceptAllFileFilterUsed(false);
             int result = fileChooser.showOpenDialog(GUI.this);
 
@@ -269,7 +268,6 @@ public class GUI extends JFrame implements ActionListener {
             aFunctionRunning = true;
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("IJK (*.IJK)", "IJK"));
-            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
             fileChooser.setAcceptAllFileFilterUsed(false);
             int result = fileChooser.showOpenDialog(GUI.this);
             if (result == JFileChooser.APPROVE_OPTION) {
@@ -319,7 +317,6 @@ public class GUI extends JFrame implements ActionListener {
             aFunctionRunning = true;
             JFileChooser fileChooser = new JFileChooser();
             fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("HUFF (*.HUFF)", "HUFF"));
-            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
             fileChooser.setAcceptAllFileFilterUsed(false);
             int result = fileChooser.showOpenDialog(GUI.this);
 
@@ -343,7 +340,7 @@ public class GUI extends JFrame implements ActionListener {
                         } catch (IOException ignored) {
                         }
                         imageReader.countFreq();
-                        imageReader.assignTree(filename);
+                        imageReader.assignTree();
                         imageReader.createHuffFile(fileName);
 
                         Date date1 = new Date();
@@ -433,7 +430,7 @@ public class GUI extends JFrame implements ActionListener {
                     String filename = imageTab.getToolTipTextAt(selectedIndex);
                     imageReader.loadImage(filename);
                     imageReader.countFreq();
-                    imageReader.assignTree(filename);
+                    imageReader.assignTree();
                     imageReader.createHuffFile(filename);
 
                     DateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss:SS");

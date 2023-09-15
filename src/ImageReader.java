@@ -19,7 +19,7 @@ public class ImageReader{
         this.gui = gui;
     }
 
-    public void assignTree(String file) {
+    public void assignTree() {
         gui.display("Generating Tree");
         tree = createHuffmanTree(counters);
         codeAssignment(tree, "");
@@ -37,7 +37,6 @@ public class ImageReader{
     }
 
     public void reset(){
-        BufferedImage image = null;
         raster = null;
         counters = null;
         distinctColorCtr = 0;
@@ -48,23 +47,20 @@ public class ImageReader{
         System.out.println("Counting Distinct Colors");
         gui.display("Counting Distinct Colors");
         counters = new HuffmanNode[raster.getHeight()*raster.getWidth()];
-        Pixel pixel = null;
-
+        Pixel pixel;
         for(int i = 0; i < raster.getHeight(); i++){
             for(int j = 0; j < raster.getWidth(); j++){
+                System.out.println("Currently on i = " + i + " and j = " + j);
                 int[] buffer = new int[4];
                 buffer = raster.getPixel(j, i, buffer);
                 pixel = new Pixel(buffer[0], buffer[1], buffer[2], j, i);
-
                 int start = 0, end = distinctColorCtr-1, mid = (int)((float)(start+end)/2.0);
-
                 if(distinctColorCtr == 0){
                     counters[distinctColorCtr] = new HuffmanNode(pixel);
                     counters[distinctColorCtr].ctr = 1;
                     distinctColorCtr++;
                     continue;
                 }
-
                 while(true){
                     if(counters[mid].key.getRGB() == pixel.getRGB()){
                         counters[mid].ctr++;
@@ -97,15 +93,15 @@ public class ImageReader{
                 }
             }
         }
-
+        System.out.println("Number of Pixels Created: " + Pixel.counter);
+        gui.display("Number of Pixels Created: " + Pixel.counter);
+        System.out.println("Number of HuffmanNode Created: " + HuffmanNode.counter);
+        gui.display("Number of HuffmanNode Created: " + HuffmanNode.counter);
         System.out.println("Distinct Colors Counted");
         gui.display("Distinct Colors Counted");
-
         System.out.println("Counters length = " + counters.length);
-
         HuffmanNode[] buffer = new HuffmanNode[distinctColorCtr];
         System.arraycopy(counters, 0, buffer, 0, distinctColorCtr);
-        counters = null;
         counters = buffer;
         System.out.println("Counters length = " + counters.length);
     }
@@ -150,7 +146,7 @@ public class ImageReader{
                 String rgb = "" + (char) counter.key.getRed() + (char) counter.key.getGreen() + (char) counter.key.getBlue();
                 String ctrBinary = Integer.toBinaryString(counter.ctr), zeroes = "00000000000000000000000000000000";
                 ctrBinary = zeroes.substring(0, (ctrBinary.length() < 16 ? 16 - ctrBinary.length() : 0)) + ctrBinary;
-                ctrBinary = "" + (char) (Integer.parseInt(ctrBinary.substring(0, ctrBinary.length() - 8), 2)) + (char) (Integer.parseInt(ctrBinary.substring(ctrBinary.length() - 8, ctrBinary.length()), 2));
+                ctrBinary = "" + (char) (Integer.parseInt(ctrBinary.substring(0, ctrBinary.length() - 8), 2)) + (char) (Integer.parseInt(ctrBinary.substring(ctrBinary.length() - 8), 2));
                 writer.print(rgb + ctrBinary);
             }
             writer.close();
@@ -167,8 +163,7 @@ public class ImageReader{
             PrintWriter writer = new PrintWriter(huffName);
             writer.println(raster.getHeight()+"\n"+raster.getWidth());
             StringBuilder binaryImage = new StringBuilder();
-            String zeroes = "00000000";
-            Pixel pixel = null;
+            Pixel pixel;
             System.out.println("Converting Image to Binary String");
             gui.display("Converting Image to Binary String");
             System.out.println("Converting Binary String to ASCII and Save to File");
@@ -178,12 +173,10 @@ public class ImageReader{
                     int[] buffer = new int[4];
                     buffer = raster.getPixel(j, i, buffer);
                     pixel = new Pixel(buffer[0], buffer[1], buffer[2], j, i);
-                    boolean foundCode = false;
                     int start = 0, end = distinctColorCtr-1, mid = (int)((float)(start+end)/2.0);
                     while(true){
                         if(counters[mid].key.getRGB() == pixel.getRGB()){
                             binaryImage.append(counters[mid].code);
-                            foundCode = true;
                             while(binaryImage.length()>=7){
                                 writer.print((char)Integer.parseInt(binaryImage.substring(0, 7), 2));
                                 binaryImage = new StringBuilder(binaryImage.substring(7));
